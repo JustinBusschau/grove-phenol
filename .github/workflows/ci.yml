@@ -44,10 +44,13 @@ jobs:
           
     - name: Install dependencies
       run: pnpm install --no-frozen-lockfile
-      
+
+    - name: Generate Prisma client
+      run: pnpm --filter api exec prisma generate
+
     - name: Run linting
       run: pnpm lint
-      
+
     - name: Run type checking
       run: pnpm typecheck
 
@@ -84,7 +87,10 @@ jobs:
           
     - name: Install dependencies
       run: pnpm install --no-frozen-lockfile
-      
+
+    - name: Generate Prisma client
+      run: pnpm --filter api exec prisma generate
+
     - name: Start services for testing
       run: |
         docker compose -f docker-compose.yml up -d postgres
@@ -129,6 +135,9 @@ jobs:
           
     - name: Install dependencies
       run: pnpm install --no-frozen-lockfile
+
+    - name: Generate Prisma client
+      run: pnpm --filter api exec prisma generate
 
     - name: Build applications
       run: pnpm build
@@ -209,7 +218,10 @@ jobs:
           
     - name: Install dependencies
       run: pnpm install --no-frozen-lockfile
-      
+
+    - name: Generate Prisma client
+      run: pnpm --filter api exec prisma generate
+
     - name: Run tests with coverage
       run: pnpm test --coverage
       
