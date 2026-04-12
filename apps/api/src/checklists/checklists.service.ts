@@ -75,7 +75,7 @@ export class ChecklistsService {
         ...data,
         status: 'DRAFT',
         steps: {
-          create: templateSteps.map((step) => ({
+          create: templateSteps.map((step: { title: string; description: string | null; order: number }) => ({
             title: step.title,
             description: step.description,
             order: step.order,

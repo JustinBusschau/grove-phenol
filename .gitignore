@@ -117,5 +117,3 @@ Thumbs.db
 # Prisma
 prisma/migrations/
 
-# Ignore docs for now
-docs/

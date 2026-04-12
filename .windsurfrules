@@ -11,6 +11,13 @@ The system must prioritise:
 - simplicity of deployment
 - maintainability
 
+## Important Information
+- The project is a web-based MVP for medication management and infusion process checklists.
+- The system must prioritise safety, auditability, clarity, low operational cost, simplicity of deployment, and maintainability.
+- The project is a single engineer project, so simplicity and maintainability are key.
+- The project is a MVP, so the focus is on correctness, safety, and auditability.
+- NEVER perform actions on Git repo (commit, push, pull, etc.) - this is EXPLICITLY FORBIDDEN and must be done by a human.
+
 ## Core stack
 - Frontend: Next.js (App Router) with TypeScript
 - Backend: NestJS with TypeScript
