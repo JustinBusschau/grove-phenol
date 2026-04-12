@@ -10,18 +10,12 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const router = useRouter()
 
-  console.log('Login page component loaded!')
-
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('handleSubmit called!', e)
     e.preventDefault()
-    console.log('FORM SUBMITTED!', { email, password })
     setIsLoading(true)
     setError('')
     
     try {
-      // Direct fetch call to test
-      console.log('Making direct API call...')
       const response = await fetch('http://localhost:23001/auth/login', {
         method: 'POST',
         headers: {
@@ -30,20 +24,16 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       })
       
-      console.log('Response status:', response.status)
       const data = await response.json()
-      console.log('Response data:', data)
       
       if (response.ok) {
         localStorage.setItem('phenol_token', data.access_token)
         localStorage.setItem('phenol_user', JSON.stringify(data.user))
-        console.log('Login successful, redirecting...')
         router.push('/dashboard')
       } else {
         throw new Error(data.message || 'Login failed')
       }
     } catch (error) {
-      console.error('Login error:', error)
       setError(error instanceof Error ? error.message : 'Login failed')
     } finally {
       setIsLoading(false)
@@ -55,14 +45,6 @@ export default function LoginPage() {
       <div className="card-header">
         <h1 className="card-title">Login</h1>
       </div>
-      
-      {/* Test button to verify JavaScript */}
-      <button 
-        onClick={() => console.log('TEST BUTTON CLICKED! JavaScript is working!')}
-        style={{ marginBottom: '1rem', background: 'orange', color: 'white' }}
-      >
-        Test JavaScript
-      </button>
       
       {error && (
         <div className="alert alert-error" style={{ marginBottom: '1rem' }}>
