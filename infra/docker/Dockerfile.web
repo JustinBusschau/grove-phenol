@@ -3,7 +3,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Install pnpm and curl
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10
 RUN apk add --no-cache curl
 
 # Copy package files
