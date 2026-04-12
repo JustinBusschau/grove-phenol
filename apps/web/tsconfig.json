@@ -13,7 +13,8 @@
         "./src/lib/*"
       ]
     },
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": [
     "next-env.d.ts",

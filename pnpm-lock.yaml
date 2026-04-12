@@ -60,7 +60,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/types
       '@prisma/client':
-        specifier: ^5.0.0
+        specifier: ^5.19.0
         version: 5.22.0(prisma@5.22.0)
       bcrypt:
         specifier: ^6.0.0
@@ -81,7 +81,7 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       prisma:
-        specifier: ^5.0.0
+        specifier: ^5.19.0
         version: 5.22.0
       reflect-metadata:
         specifier: ^0.1.13
@@ -190,6 +190,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.0.0
         version: 14.6.1(@testing-library/dom@9.3.4)
+      '@types/jest':
+        specifier: ^29.0.0
+        version: 29.5.14
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.39
