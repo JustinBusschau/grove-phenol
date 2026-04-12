@@ -75,7 +75,7 @@ export class ChecklistsService {
         ...data,
         status: 'DRAFT',
         steps: {
-          create: templateSteps.map(step => ({
+          create: templateSteps.map((step) => ({
             title: step.title,
             description: step.description,
             order: step.order,
@@ -208,8 +208,8 @@ export class ChecklistsService {
     resourceId: string;
     checklistId?: string;
     checklistStepId?: string;
-    newValues?: Record<string, unknown>;
-    oldValues?: Record<string, unknown>;
+    newValues?: unknown;
+    oldValues?: unknown;
   }) {
     return this.prisma.auditEvent.create({
       data: {
@@ -217,6 +217,6 @@ export class ChecklistsService {
         ipAddress: '127.0.0.1', // TODO: Get from request
         userAgent: 'Phenol API', // TODO: Get from request
       },
-    });
+    } as any);
   }
 }
