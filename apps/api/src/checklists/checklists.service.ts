@@ -208,8 +208,8 @@ export class ChecklistsService {
     resourceId: string;
     checklistId?: string;
     checklistStepId?: string;
-    newValues?: any;
-    oldValues?: any;
+    newValues?: Record<string, unknown>;
+    oldValues?: Record<string, unknown>;
   }) {
     return this.prisma.auditEvent.create({
       data: {

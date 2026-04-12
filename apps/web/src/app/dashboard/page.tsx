@@ -6,8 +6,8 @@ import { getUser, isAuthenticated, logout } from '../../lib/auth'
 import axios from 'axios'
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null)
-  const [medications, setMedications] = useState([])
+  const [user, setUser] = useState<{ id: string; email: string; firstName: string; lastName: string; role: string } | null>(null)
+  const [medications, setMedications] = useState<Array<{ id: string; name: string; description: string; concentration: string; unit: string }>>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -84,7 +84,7 @@ export default function DashboardPage() {
           <div className="text-center">Loading medications...</div>
         ) : (
           <div className="medications-grid">
-            {medications.slice(0, 6).map((med: any) => (
+            {medications.slice(0, 6).map((med) => (
               <div key={med.id} className="card mb-3">
                 <div className="card-body">
                   <h3>{med.name}</h3>

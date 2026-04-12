@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../common/prisma/prisma.module';
 import { LoginDto } from './dto/login.dto';
+import { UserWithoutPassword } from './types';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<UserWithoutPassword | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
       include: { role: true },
@@ -26,6 +27,7 @@ export class AuthService {
       return null;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = user;
     return result;
   }

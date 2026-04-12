@@ -34,10 +34,11 @@ export async function login(email: string, password: string): Promise<LoginRespo
     });
 
     return response.data;
-  } catch (error: any) {
-    if (error.response) {
-      throw new Error(error.response.data.message || 'Login failed');
-    } else if (error.request) {
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      throw new Error(axiosError.response?.data?.message || 'Login failed');
+    } else if (error && typeof error === 'object' && 'request' in error) {
       throw new Error('Network error - please check your connection');
     } else {
       throw new Error('Login failed - please try again');

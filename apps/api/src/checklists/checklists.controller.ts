@@ -14,6 +14,14 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 
+interface AuthenticatedRequest {
+  user: {
+    id: string;
+    email: string;
+    role: string;
+  };
+}
+
 @ApiTags('checklists')
 @Controller('checklists')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -45,10 +53,10 @@ export class ChecklistsController {
     patientId: string;
     medicationId?: string;
     notes?: string;
-  }, @Request() req: any) {
+  }, @Request() req: AuthenticatedRequest) {
     return this.checklistsService.create({
       ...data,
-      clinicianId: req.user.userId,
+      clinicianId: req.user.id,
     });
   }
 
@@ -57,8 +65,8 @@ export class ChecklistsController {
   @ApiOperation({ summary: 'Start infusion checklist' })
   @ApiResponse({ status: 200, description: 'Checklist started successfully' })
   @ApiResponse({ status: 404, description: 'Checklist not found' })
-  async startChecklist(@Param('id') id: string, @Request() req: any) {
-    return this.checklistsService.startChecklist(id, req.user.userId);
+  async startChecklist(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
+    return this.checklistsService.startChecklist(id, req.user.id);
   }
 
   @Put(':id/steps/:stepId/complete')
@@ -70,12 +78,12 @@ export class ChecklistsController {
     @Param('id') checklistId: string,
     @Param('stepId') stepId: string,
     @Body() data: { notes?: string },
-    @Request() req: any
+    @Request() req: AuthenticatedRequest
   ) {
     return this.checklistsService.completeStep(
       checklistId, 
       stepId, 
-      req.user.userId, 
+      req.user.id, 
       data.notes
     );
   }
@@ -85,8 +93,8 @@ export class ChecklistsController {
   @ApiOperation({ summary: 'Complete entire checklist' })
   @ApiResponse({ status: 200, description: 'Checklist completed successfully' })
   @ApiResponse({ status: 400, description: 'Cannot complete checklist with incomplete steps' })
-  async completeChecklist(@Param('id') id: string, @Request() req: any) {
-    return this.checklistsService.completeChecklist(id, req.user.userId);
+  async completeChecklist(@Param('id') id: string, @Request() req: AuthenticatedRequest) {
+    return this.checklistsService.completeChecklist(id, req.user.id);
   }
 
   @Put(':id/cancel')
@@ -96,8 +104,8 @@ export class ChecklistsController {
   async cancelChecklist(
     @Param('id') id: string,
     @Body() data: { reason?: string },
-    @Request() req: any
+    @Request() req: AuthenticatedRequest
   ) {
-    return this.checklistsService.cancelChecklist(id, req.user.userId, data.reason);
+    return this.checklistsService.cancelChecklist(id, req.user.id, data.reason);
   }
 }
