@@ -1,0 +1,29 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install pnpm and curl
+RUN npm install -g pnpm
+RUN apk add --no-cache curl
+
+# Copy package files
+COPY package.json pnpm-workspace.yaml ./
+COPY apps/web/package.json ./apps/web/
+COPY packages/config/package.json ./packages/config/
+COPY packages/types/package.json ./packages/types/
+
+# Install dependencies
+RUN pnpm install
+
+# Copy source code
+COPY apps/web ./apps/web
+COPY packages ./packages
+
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000 || exit 1
+
+WORKDIR /app/apps/web
+CMD ["pnpm", "dev"]

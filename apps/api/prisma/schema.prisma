@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  password  String
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  checklists InfusionChecklist[]
+  auditEvents AuditEvent[]
+
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        RoleName @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users User[]
+
+  @@map("roles")
+}
+
+model Medication {
+  id           String  @id @default(cuid())
+  name         String
+  description  String?
+  concentration String
+  unit         String
+  isActive     Boolean @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  checklists  InfusionChecklist[]
+
+  @@map("medications")
+}
+
+model InfusionChecklist {
+  id          String   @id @default(cuid())
+  patientId   String
+  status      ChecklistStatus @default(DRAFT)
+  startedAt   DateTime?
+  completedAt DateTime?
+  clinicianId String
+  notes       String?
+  medicationId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  medication   Medication?  @relation(fields: [medicationId], references: [id])
+  clinician    User          @relation(fields: [clinicianId], references: [id])
+  steps        ChecklistStep[]
+  auditEvents  AuditEvent[]
+
+  @@map("infusion_checklists")
+}
+
+model ChecklistStep {
+  id           String  @id @default(cuid())
+  title        String
+  description  String?
+  order        Int
+  isCompleted  Boolean @default(false)
+  completedAt  DateTime?
+  completedBy  String?
+  notes        String?
+  checklistId  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  checklist   InfusionChecklist? @relation(fields: [checklistId], references: [id])
+  auditEvents  AuditEvent[]
+
+  @@map("checklist_steps")
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  userId       String
+  action       String
+  resourceType String
+  resourceId   String
+  oldValues    Json?
+  newValues    Json?
+  ipAddress    String
+  userAgent     String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id])
+  checklist    InfusionChecklist? @relation(fields: [checklistId], references: [id])
+  checklistStep ChecklistStep? @relation(fields: [checklistStepId], references: [id])
+  checklistId  String?
+  checklistStepId String?
+
+  @@map("audit_events")
+}
+
+enum RoleName {
+  ADMIN
+  CLINICIAN
+}
+
+enum ChecklistStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}

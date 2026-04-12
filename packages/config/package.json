@@ -1,0 +1,12 @@
+{
+  "name": "@phenol/config",
+  "version": "1.0.0",
+  "description": "Shared TypeScript configuration for Phenol",
+  "main": "index.js",
+  "files": [
+    "*.json"
+  ],
+  "scripts": {
+    "clean": "rm -rf node_modules"
+  }
+}

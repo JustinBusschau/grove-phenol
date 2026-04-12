@@ -1,0 +1,229 @@
+# .windsurfrules
+
+## Project
+Phenol is a web-based MVP for medication management and infusion process checklists.
+
+The system must prioritise:
+- safety
+- auditability
+- clarity
+- low operational cost
+- simplicity of deployment
+- maintainability
+
+## Core stack
+- Frontend: Next.js (App Router) with TypeScript
+- Backend: NestJS with TypeScript
+- Database: PostgreSQL
+- Local Dev: Docker + Docker Compose
+- Infrastructure: Terraform
+- CI: GitHub Actions
+- Deployment: Manual / self-hosted execution
+- DNS: External provider (GoDaddy)
+
+## Key architectural constraints
+
+### Local development
+Docker Compose is used ONLY for local development.
+
+It must:
+- run web, api, postgres, and optional tooling (e.g. SonarQube)
+- be fast to start
+- support hot reload for web and api
+- use bind mounts where appropriate
+
+### Production architecture
+Production runs on:
+- a SINGLE AWS EC2 instance
+- Docker installed on the host
+- services run via Docker (Compose or systemd-managed containers)
+
+Do NOT assume:
+- Docker Compose exists in production (it may, but must not be required)
+- container orchestration (no ECS/EKS/Fargate)
+- load balancers
+- NAT gateways
+- multi-node setups
+
+### DNS
+DNS is managed externally via GoDaddy.
+
+Implications:
+- no Route53 resources in Terraform
+- infrastructure must expose:
+  - public IP
+  - required ports
+- documentation must include:
+  - how to point A records to EC2 instance
+
+## Delivery priorities
+1. correctness
+2. safety and auditability
+3. simplicity
+4. operability by a single engineer
+5. cost control
+6. developer experience
+
+## Domain rules
+- All critical actions must be auditable
+- Prefer append-only audit logs
+- Explicit workflow states (no implicit transitions)
+- All timestamps in UTC
+- No destructive deletes for critical records
+
+## Frontend rules
+- Next.js App Router
+- TypeScript strict mode
+- No Tailwind
+- Use CSS Modules or equivalent
+- Server components by default
+- Accessible UI
+
+Design principles:
+- clinical clarity
+- strong contrast and readability
+- explicit states (e.g. pending, complete, error)
+
+## Backend rules
+- NestJS modular architecture
+- DTO validation via class-validator
+- OpenAPI/Swagger enabled
+- Prisma ORM (preferred)
+- structured logging
+- health endpoints
+
+Avoid:
+- business logic in controllers
+- implicit state transitions
+- weak typing
+
+## Data rules
+- PostgreSQL
+- Prisma migrations
+- audit/event tables required
+- include:
+  - created_at
+  - updated_at
+  - user attribution
+
+## Security rules
+- authentication required
+- role-based authorization scaffold
+- no secrets in code
+- env-driven config only
+- server-side validation everywhere
+
+## Infrastructure rules
+Terraform must define:
+- EC2 instance
+- security group
+- SSH access (restricted)
+- optional EBS volume
+
+Must NOT include:
+- Route53
+- load balancers
+- NAT gateways
+- autoscaling groups
+
+Outputs must include:
+- public IP
+- SSH command example
+
+## CI rules
+GitHub Actions must:
+- install dependencies
+- lint
+- typecheck
+- test
+- build
+- validate Docker builds
+- run terraform fmt + validate
+
+## Code quality (local tooling)
+Include local SonarQube via Docker.
+
+Requirements:
+- docker-compose service for SonarQube
+- optional script to run analysis locally
+- no dependency on SonarCloud or paid services
+
+## Deployment model
+
+Deployment is manual or self-hosted.
+
+Acceptable approaches:
+- SSH into EC2 and run deployment script
+- self-hosted GitHub Actions runner on EC2
+- pull-based deployment script
+
+Deployment must:
+- pull latest code or image
+- run migrations
+- restart services safely
+- verify health endpoint
+
+Avoid:
+- complex CD pipelines
+- managed deployment services
+
+## Repo structure
+Monorepo:
+- apps/web
+- apps/api
+- packages/config
+- packages/types
+- infra/terraform
+- infra/docker
+- scripts
+- docs
+
+## Testing
+- high-value behavioural coverage over arbitrary % thresholds
+- unit tests for backend services
+- integration tests for critical flows
+- smoke tests for startup
+- test coverage for authentication and authorization
+
+## Observability
+- structured logs
+- health endpoint
+- container health checks
+
+## Documentation
+Must include:
+- local setup
+- deployment steps (manual)
+- DNS setup via GoDaddy
+- environment variables
+- troubleshooting steps
+
+## Decision bias
+Prefer:
+- simple over scalable
+- explicit over abstract
+- cheap over elegant
+- maintainable by one engineer
+
+## Avoid
+- Kubernetes
+- microservices
+- event buses
+- premature scaling patterns
+- paid AWS baseline services
+
+## Working style
+When implementing:
+1. define minimal viable change
+2. implement with production realism
+3. include run instructions
+4. list assumptions and next steps
+
+## Initial milestone
+A working system that:
+- runs locally via Docker Compose
+- deploys to a single EC2 instance
+- connects frontend + backend + database
+- supports authentication
+- supports a basic checklist workflow
+- can be deployed manually via script

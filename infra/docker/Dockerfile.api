@@ -1,0 +1,35 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install pnpm and system dependencies
+RUN npm install -g pnpm
+RUN apk add --no-cache openssl curl
+
+# Copy package files
+COPY package.json pnpm-workspace.yaml ./
+COPY apps/api/package.json ./apps/api/
+COPY packages/config/package.json ./packages/config/
+COPY packages/types/package.json ./packages/types/
+
+# Install dependencies
+RUN pnpm install
+
+# Copy source code
+COPY apps/api ./apps/api
+COPY packages ./packages
+
+# Generate Prisma client
+RUN cd apps/api && pnpm prisma:generate
+
+# Build application
+RUN cd apps/api && pnpm build
+
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+WORKDIR /app/apps/api
+CMD ["node", "dist/src/main"]

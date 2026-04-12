@@ -1,0 +1,17 @@
+{
+  "name": "@phenol/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for Phenol",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist node_modules"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
