@@ -4,7 +4,7 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: phenol-postgres-dev
+    container_name: phenol-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: phenol
@@ -25,7 +25,7 @@ services:
   api:
     build:
       dockerfile: infra/docker/Dockerfile.api.dev
-    container_name: phenol-api-dev
+    container_name: phenol-api
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://phenol:password@postgres:5432/phenol
@@ -54,7 +54,7 @@ services:
   web:
     build:
       dockerfile: infra/docker/Dockerfile.web.dev
-    container_name: phenol-web-dev
+    container_name: phenol-web
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:23001
@@ -75,10 +75,10 @@ services:
       - ./package.json:/app/package.json
       - ./pnpm-workspace.yaml:/app/pnpm-workspace.yaml
 
-# SonarQube for code quality
+  # SonarQube for code quality
   sonarqube:
     image: sonarqube:community
-    container_name: phenol-sonarqube-dev
+    container_name: phenol-sonarqube
     restart: unless-stopped
     environment:
       SONAR_JDBC_URL: jdbc:postgresql://postgres:5432/sonar
@@ -86,6 +86,10 @@ services:
       SONAR_JDBC_PASSWORD: sonar
     ports:
       - "29000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
     depends_on:
       postgres:
         condition: service_healthy
@@ -98,3 +102,10 @@ services:
 
 volumes:
   postgres_data:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+
+networks:
+  default:
+    name: phenol-network
