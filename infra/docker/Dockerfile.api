@@ -2,8 +2,8 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Install pnpm and system dependencies
-RUN npm install -g pnpm@10
+# Install pnpm via corepack and system dependencies
+RUN corepack enable && corepack prepare pnpm@10 --activate
 RUN apk add --no-cache openssl curl
 
 # Copy package files
